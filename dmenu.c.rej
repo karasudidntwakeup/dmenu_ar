@@ -1,49 +1,37 @@
---- dmenu.c	2020-04-04 10:27:43.888026309 +0200
-+++ dmenu.c	2019-02-02 13:55:02.000000000 +0100
-@@ -26,9 +26,7 @@
- #define TEXTW(X)              (drw_fontset_getwidth(drw, (X)) + lrpad)
+--- dmenu.c
++++ dmenu.c
+@@ -143,12 +142,7 @@ drawmenu(void)
+ 	/* draw input field */
+ 	w = (lines > 0 || !matches) ? mw - x : inputw;
+ 	drw_setscheme(drw, scheme[SchemeNorm]);
+-	if (passwd) {
+-	        censort = ecalloc(1, sizeof(text));
+-		memset(censort, '.', strlen(text));
+-		drw_text(drw, x, 0, w, bh, lrpad / 2, censort, 0);
+-		free(censort);
+-	} else drw_text(drw, x, 0, w, bh, lrpad / 2, text, 0);
++	drw_text(drw, x, 0, w, bh, lrpad / 2, text, 0);
  
- /* enums */
--enum { SchemeNorm, SchemeSel, SchemeNormHighlight, SchemeSelHighlight,
--       SchemeOut, SchemeLast }; /* color schemes */
+ 	curpos = TEXTW(text) - TEXTW(&text[cursor]);
+ 	if ((curpos += lrpad / 2 - 1) < w) {
+@@ -529,11 +523,6 @@ readstdin(void)
+ 	char buf[sizeof text], *p;
+ 	size_t i, imax = 0, size = 0;
+ 	unsigned int tmpmax = 0;
+-	if(passwd){
+-    	inputw = lines = 0;
+-    	return;
+-  	}
 -
-+enum { SchemeNorm, SchemeSel, SchemeOut, SchemeLast }; /* color schemes */
  
- struct item {
- 	char *text;
-@@ -125,9 +83,7 @@ drawitem(struct item *item, int x, int y
- 	else
- 		drw_setscheme(drw, scheme[SchemeNorm]);
- 
--	r = drw_text(drw, x, y, w, bh, lrpad / 2, item->text, 0);
--	drawhighlights(item, x, y, w);
--	return r;
-+	return drw_text(drw, x, y, w, bh, lrpad / 2, item->text, 0);
- }
- 
+ 	/* read each line from stdin and add it to the item list */
+ 	for (i = 0; fgets(buf, sizeof buf, stdin); i++) {
+@@ -699,7 +688,7 @@ setup(void)
  static void
-@@ -687,8 +643,7 @@ static void
  usage(void)
  {
- 	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
--	      "             [-nb color] [-nf color] [-sb color] [-sf color]\n"
--	      "             [-nhb color] [-nhf color] [-shb color] [-shf color] [-w windowid]\n", stderr);
-+	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
+-	fputs("usage: dmenu [-bfivP] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
++	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+ 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
  	exit(1);
  }
- 
-@@ -729,14 +684,6 @@ main(int argc, char *argv[])
- 			colors[SchemeSel][ColBg] = argv[++i];
- 		else if (!strcmp(argv[i], "-sf"))  /* selected foreground color */
- 			colors[SchemeSel][ColFg] = argv[++i];
--		else if (!strcmp(argv[i], "-nhb")) /* normal hi background color */
--			colors[SchemeNormHighlight][ColBg] = argv[++i];
--		else if (!strcmp(argv[i], "-nhf")) /* normal hi foreground color */
--			colors[SchemeNormHighlight][ColFg] = argv[++i];
--		else if (!strcmp(argv[i], "-shb")) /* selected hi background color */
--			colors[SchemeSelHighlight][ColBg] = argv[++i];
--		else if (!strcmp(argv[i], "-shf")) /* selected hi foreground color */
--			colors[SchemeSelHighlight][ColFg] = argv[++i];
- 		else if (!strcmp(argv[i], "-w"))   /* embedding window id */
- 			embed = argv[++i];
- 		else
