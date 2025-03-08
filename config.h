@@ -8,9 +8,9 @@ static const char *fonts[] = { "Comic Code:size=16", "SF Arabic:size=11","JetBra
 static const char *prompt      = NULL;      /* -p  option; prompt to the left of input field */
 static const char *colors[SchemeLast][2] = {
 	/*     fg         bg       */
-	[SchemeNorm] = { "#bbbbbb", "#ffffff" },
-	[SchemeSel] = { "#eeeeee", "#000000" },
-	[SchemeOut] = { "#ffffff", "#000000" },
+	[SchemeNorm] = { "#bbbbbb", "#141423" },
+	[SchemeSel] = { "#c197fd", "#373760" },
+	[SchemeOut] = { "#c197fd", "#000000" },
 };
 /* -l option; if nonzero, dmenu uses vertical list with given number of lines */
 static unsigned int lines      = 0;
